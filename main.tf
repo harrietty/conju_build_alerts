@@ -58,6 +58,17 @@ resource "aws_iam_role" "iam_for_lambda" {
 EOF
 }
 
+// This is a Resource-based permission (not an Identity-based IAM permission)
+// It applies to the lambda itself, allowing invocation from another service (in this case, CW Events)
+// See https://docs.aws.amazon.com/lambda/latest/dg/lambda-permissions.html for more info
+resource "aws_lambda_permission" "allow_cloudwatch" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.slack_function.function_name}"
+  principal     = "events.amazonaws.com"
+  source_arn    = "${aws_cloudwatch_event_rule.event.arn}"
+}
+
 resource "aws_iam_policy" "lambda_logging" {
   name        = "lambda_logging"
   path        = "/"

@@ -12,8 +12,10 @@ To build the lambda:
 
     make build
 
-To deploy code or infrastructure changes:
+To see the changes Terraform intends to apply to the production stack, run:
 
-    terraform plan
+    $ terraform plan -var-file="secrets.tfvars"
 
-    terraform apply
+If you are happy with these changes, run:
+
+    $ terraform apply -var-file="secrets.tfvars"

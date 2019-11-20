@@ -21,3 +21,6 @@ vendor
 ./lambda_function_payload.zip
 
 .terraform/
+
+# Environment variables
+secrets.tfvars

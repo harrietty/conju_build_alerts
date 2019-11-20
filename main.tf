@@ -12,26 +12,29 @@ terraform {
   }
 }
 
+variable "SLACK_WEBHOOK" {
+  type = "string"
+}
+
 resource "aws_cloudwatch_event_rule" "event" {
-  name        = "conju_state_change"
-  description = "An event triggered on the state change of conjugator frontend build pipeline"
+  name        = "conju_pipeline_change"
+  description = "An event triggered on the state change of conjugator codepipeline"
 
   event_pattern = <<PATTERN
 {
   "source": [
-    "aws.codebuild"
+    "aws.codepipeline"
   ],
   "detail-type": [
-    "CodeBuild Build State Change"
+    "CodePipeline Pipeline Execution State Change"
   ],
   "detail": {
-    "build-status": [
+    "state": [
       "SUCCEEDED",
-      "FAILED",
-      "STOPPED"
+      "FAILED"
     ],
-    "project-name": [
-      "Conju-gator-cache-invalidation"
+    "pipeline": [
+      "conju-gator-pipeline"
     ]
   }
 }
@@ -108,7 +111,7 @@ resource "aws_lambda_function" "slack_function" {
 
   environment {
     variables = {
-      slack_hook_url = "3948fjksdfj"
+      SLACK_WEBHOOK = "${var.SLACK_WEBHOOK}"
     }
   }
 }
